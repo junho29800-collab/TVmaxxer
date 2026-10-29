@@ -1,6 +1,4 @@
-<div align="center">
 
-<img src="docs/assets/icon-512.png" width="96" alt="">
 
 # TVmaxxer
 
@@ -10,10 +8,6 @@ Trending picks from your own apps, the weather at a glance, and a look that foll
 Open source. Built with Claude Code. One button to undo.
 
 [**tvmaxxer.io**](https://tvmaxxer.io) · [Install](#install) · [LG TVs](#lg-tvs-webos) · [Samsung TVs](#samsung-tvs-tizen) · [Any TV](#any-tv) · [Make it yours](#make-it-yours)
-
-<img src=".github/preview.webp" width="880" alt="The TVmaxxer home screen: a glass shelf of apps, trending picks, and a drawer with the weather and crypto prices">
-
-</div>
 
 ## What you get
 
