@@ -313,19 +313,3 @@ reference (fix them by hand); the others were machine-made, and corrections from
 ## Privacy
 
 No accounts, no analytics, no tracking. The app talks to TMDB, Open-Meteo (with the coordinates you set, or your time zone's main city), and Binance only when `show_crypto=true`, Watchmode only when you set a `watchmode_key`, and your Plex server only when you set a `plex_url`. On Google TV and Android TV, the APK from the release asks GitHub (api.github.com) once a week, or when you press *Updates*, for the latest release, and when there's a newer one downloads it from github.com and GitHub's download server (release-assets.githubusercontent.com); a build you made yourself asks only when you press *Updates*. The *Now Playing widget* reads what apps are playing (title, artist, the app) through a notification listener, the only way Android shares it: TVmaxxer allows the listener only while the widget is on, never reads a notification with it, and asks Android to unbind it as soon as it connects, so it stays unbound. What's playing never leaves the TV. While *Home Settings* → *TMDB key* shows its QR code (5 minutes at most), the TV answers on your home network at that code's address, for one key; the key goes to TMDB only, to check it. Continue Watching (Home Settings) reads what your apps note on the TV itself and shows only pictures already on the TV: it downloads nothing. Your settings stay on your computer and your TV.
-
-## Credits
-
-- Built with [Claude Code](https://claude.com/claude-code).
-- The LG version builds on what [@danielthejoker18](https://github.com/danielthejoker18) found in [FreeMyTvWebOS](https://github.com/danielthejoker18/FreeMyTvWebOS) (MIT): installing through Developer Mode and opening apps through the TV's service bus.
-- On Samsung TVs it installs with [TizenBrew Installer](https://github.com/reisxd/TizenBrewInstaller) by [@reisxd](https://github.com/reisxd).
-- This product uses the TMDB API but is not endorsed or certified by [TMDB](https://www.themoviedb.org/).
-- Links to the titles in the streaming apps by [Watchmode](https://api.watchmode.com/).
-- Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0). Prices from the [Binance](https://www.binance.com/) public API.
-- Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Font: [Inter](https://rsms.me/inter/) (SIL OFL 1.1). Coin logos: [cryptocurrency-icons](https://github.com/spothq/cryptocurrency-icons) (CC0). Samsung app logos: [Simple Icons](https://simpleicons.org) (CC0).
-- The QR code encoder follows Project Nayuki's [QR Code generator](https://www.nayuki.io/page/qr-code-generator-library) (MIT).
-- Not affiliated with Google, TCL, LG, Samsung or any streaming service. App names and logos belong to their owners.
-
-## License
-
-[MIT](LICENSE). Fork it, change it, ship it.
