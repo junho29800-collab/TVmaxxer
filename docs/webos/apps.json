@@ -9,22 +9,22 @@
   },
   "packages": [
     {
-      "id": "io.freemytv",
-      "title": "Free My TV",
-      "iconUri": "https://freemytv.io/assets/icon-512.png",
+      "id": "io.tvmaxxer",
+      "title": "TVmaxxer",
+      "iconUri": "https://tvmaxxer.io/assets/icon-512.png",
       "shortDescription": "A fast, ad-free home screen: your apps on a glass shelf, the weather and prices, day and night.",
       "pool": "main",
       "fullDescriptionUrl": "full_description.html",
       "manifest": {
-        "id": "io.freemytv",
+        "id": "io.tvmaxxer",
         "version": "1.3.0",
         "type": "web",
-        "title": "Free My TV",
+        "title": "TVmaxxer",
         "appDescription": "A fast, ad-free home screen: your apps on a glass shelf, the weather and prices, day and night.",
-        "iconUri": "https://freemytv.io/assets/icon-512.png",
-        "sourceUrl": "https://github.com/simbasjungles/free-my-tv",
+        "iconUri": "https://tvmaxxer.io/assets/icon-512.png",
+        "sourceUrl": "https://github.com/simbasjungles/tvmaxxer",
         "rootRequired": false,
-        "ipkUrl": "https://freemytv.io/webos/FreeMyTV-webos-1.3.0.ipk",
+        "ipkUrl": "https://tvmaxxer.io/webos/TVmaxxer-webos-1.3.0.ipk",
         "ipkHash": {
           "sha256": "3a9dc64092fc350a0e09232e3abf69631a047eb8707bcf2dc8327dba8af2cb1f"
         },

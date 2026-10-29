@@ -1,10 +1,10 @@
 {
-  "id": "io.freemytv",
+  "id": "io.tvmaxxer",
   "version": "1.3.0",
-  "vendor": "Free My TV",
+  "vendor": "TVmaxxer",
   "type": "web",
   "main": "index.html",
-  "title": "Free My TV",
+  "title": "TVmaxxer",
   "icon": "icon.png",
   "largeIcon": "largeIcon.png",
   "iconColor": "#FF7A9E",

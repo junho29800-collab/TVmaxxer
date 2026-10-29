@@ -1,4 +1,4 @@
-# Publishes the website in docs/ to GitHub Pages (freemytv.io) whenever it changes on main.
+# Publishes the website in docs/ to GitHub Pages (tvmaxxer.io) whenever it changes on main.
 name: Website
 
 on:

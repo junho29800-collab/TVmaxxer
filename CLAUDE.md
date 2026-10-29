@@ -1,10 +1,10 @@
-# Free My TV: notes for Claude
+# TVmaxxer: notes for Claude
 
 A home screen for Google TV and Android TV that replaces the stock one, plus a settings app that switches between
-Free My TV and the TV's original home screen. A plain Android app in Java, built without Gradle by `build.sh`.
+TVmaxxer and the TV's original home screen. A plain Android app in Java, built without Gradle by `build.sh`.
 LG TVs (webOS) and Samsung TVs (Tizen) get the same home screen as a web app: `web/`, packed by `webos/` and `tizen/`
 (see below).
-The website (freemytv.io) is in `docs/`: static HTML, CSS and JS, no build step. A push to `main` that changes it
+The website (tvmaxxer.io) is in `docs/`: static HTML, CSS and JS, no build step. A push to `main` that changes it
 publishes it to GitHub Pages (`.github/workflows/pages.yml`). `docs/index.html` (English) and `docs/pt/index.html`
 (Brazilian Portuguese) are the same page in two languages, so change both; visitors from Brazil land on the
 Portuguese one by themselves, and the PT/EN switch in the menu is remembered.
@@ -23,7 +23,7 @@ before you do it, and let them do the taps on the TV.
   RecoveryActivity takes Home, and a restart there factory-reset a Xiaomi. If it can't go off, the home screen stays on.
   The Kalley 43G200 (`R3_GTV`) turns it back on at every start and boot-looped without its home screen: the switch
   refuses there. On Amazon Fire TV (Fire OS: `HomeMode.AMAZON`), Amazon's launcher keeps the Home button (`priority=950`
-  on `CATEGORY_HOME`), so the switch refuses Free My TV mode while *Original* and the watchdog still run, and no
+  on `CATEGORY_HOME`), so the switch refuses TVmaxxer mode while *Original* and the watchdog still run, and no
   `com.amazon.*` package is ever turned off (`mayTurnOff`).
 - Never turn off an app that saved a Wi-Fi network: Android deletes its networks and Original can't bring them
   back (`wifiOwners` in `HomeMode`). When the Wi-Fi service doesn't answer, the switch stops on Wi-Fi, and the boot
@@ -54,11 +54,11 @@ before you do it, and let them do the taps on the TV.
    The same goes for the optional `watchmode_key` (free, watchmode.com; makes picks open the title's page): theirs, secret, only in `config.properties`.
    And for `plex_url` and `plex_token` (Google TV only; their Plex server's newest titles join the picks): the token opens
    their Plex account, so suggest a Plex Home managed user's (the README says how), and it goes only in `config.properties`.
-5. **Build:** `./build.sh` → `FreeMyTV.apk`. Keep `freemytv.keystore`: updates must be signed with the same key.
+5. **Build:** `./build.sh` → `TVmaxxer.apk`. Keep `tvmaxxer.keystore`: updates must be signed with the same key.
 6. **Install:** `adb connect <IP>:5555`. The TV asks *Allow USB debugging?*: tell them to accept and tick *Always
-   allow*. Then `adb install -r FreeMyTV.apk`. If it hangs, Google Play Protect is asking on the TV (Android 14:
+   allow*. Then `adb install -r TVmaxxer.apk`. If it hangs, Google Play Protect is asking on the TV (Android 14:
    *Risky app blocked*, "built for an older version of Android", since targetSdk is 33): they choose *More details* →
-   *Install anyway* (updates don't ask again). On TCL, also `adb shell "appops set io.freemytv AUTO_START allow || appops set io.freemytv APP_AUTO_START allow"`
+   *Install anyway* (updates don't ask again). On TCL, also `adb shell "appops set io.tvmaxxer AUTO_START allow || appops set io.tvmaxxer APP_AUTO_START allow"`
    (some firmware calls the operation `APP_AUTO_START`; this tries both):
    TCL's `TclAppBoot` blocks background jobs by default, so the switch (and the watchdog) never run. The log shows
    `forbid bind service ... ModeJob`. An uninstall takes the permission back (moving from their own build to the
@@ -70,17 +70,17 @@ before you do it, and let them do the taps on the TV.
    has a second, separate background killer, `TGuard` (`com.tcl.guard`), which kills the app's processes about a second
    after any other app comes to the front. The switch's benchmark opens the original home screen a few times (that's
    the launcher flashing by during "Measuring…"), so TGuard can kill `ModeJob` there (log: `TGuardMemoryManagerKillHandler
-   ... tguard-kill`, then `Scheduling restart of crashed service io.freemytv/.ModeJob`). The JobScheduler runs the job
+   ... tguard-kill`, then `Scheduling restart of crashed service io.tvmaxxer/.ModeJob`). The JobScheduler runs the job
    again by itself within a minute or two, and a benchmark that fails only logs now (it used to read as "Couldn't turn on
-   Free My TV: Read timed out", #277). Tell them: if the settings screen closes on the stock launcher, wait a minute or two, then press
-   Home; Free My TV opening confirms the switch. No `adb`/`appops` setting turns TGuard off (its content providers aren't
+   TVmaxxer: Read timed out", #277). Tell them: if the settings screen closes on the stock launcher, wait a minute or two, then press
+   Home; TVmaxxer opening confirms the switch. No `adb`/`appops` setting turns TGuard off (its content providers aren't
    exported to the shell user).
    Chromecast with Google TV (Android 14) refuses port 5555 even with USB debugging on: have them turn on *Wireless
    debugging*, pair with `adb pair <address:port> <code>` (the code is on the TV), then run `adb tcpip 5555` over that
    connection. It closes again at every restart (Wireless debugging turns itself off; `persist.adb.tcp.port` is
    refused), and until `adb tcpip 5555` runs again *Original*, the watchdog and the boot check can't reach ADB. Tell
    them before the switch (#195). Google TV's voice results for films and shows come from its home app (launcherx),
-   which Free My TV mode turns off; ADB can't turn off only its home activities, so tell them before they switch.
+   which TVmaxxer mode turns off; ADB can't turn off only its home activities, so tell them before they switch.
    On a Mac, `adb connect` can fail with `No route to host` while the TV answers (`nc -z <IP> 5555` connects): macOS's
    Local Network privacy blocks the adb server that adb starts in the background. Start it from the same terminal
    instead (`adb kill-server; adb nodaemon server &`), or allow the terminal app under System Settings → Privacy &
@@ -88,10 +88,10 @@ before you do it, and let them do the taps on the TV.
 7. **Tell them what the switch does** before they make it: the home screen and screensaver change, a short list of
    promo apps is turned off (never uninstalled), and *Original* brings it all back. On TCL, the remote's Netflix,
    YouTube and Prime buttons keep working through a small accessibility service that only reads those buttons
-   (*Free My TV* → *Remote Buttons* picks what each opens); *Original* turns it off. On TCL's Android 11 there's no
-   service (the TV moved the volume twice with it), so there the buttons work only on Free My TV's home screen. On
-   Xiaomi TVs whose remote has no Home button, the same service makes its Mi button open Free My TV instead of PatchWall.
-8. **They switch on the TV:** *Free My TV* → *Home Screen* → *Free My TV*. The app uses the TV's own ADB on
+   (*TVmaxxer* → *Remote Buttons* picks what each opens); *Original* turns it off. On TCL's Android 11 there's no
+   service (the TV moved the volume twice with it), so there the buttons work only on TVmaxxer's home screen. On
+   Xiaomi TVs whose remote has no Home button, the same service makes its Mi button open TVmaxxer instead of PatchWall.
+8. **They switch on the TV:** *TVmaxxer* → *Home Screen* → *TVmaxxer*. The app uses the TV's own ADB on
    127.0.0.1 with its own key, so the TV asks once more to allow debugging. Don't switch modes from the computer.
    Before they switch, run `adb disconnect <IP>:5555` (connect again for step 9): on Android 8 to 10 the TV can hand
    its answer to a computer that's still connected (#221).
@@ -100,12 +100,12 @@ before you do it, and let them do the taps on the TV.
    networks out of range don't show in Settings: find the ones with `cname=com.google.android.tungsten.setupwraith`
    in `adb shell dumpsys wifi` (each block starts with its `ID:`), and with their OK remove them with
    `adb shell cmd wifi forget-network <id>`.
-9. **Check:** `adb logcat -s FreeMyTV` shows what the switch did.
+9. **Check:** `adb logcat -s TVmaxxer` shows what the switch did.
 
 ## Installing it on an LG TV (webOS)
 
 On LG it's an app, installed through LG's Developer Mode, and it changes nothing else on the TV: LG's home screen
-stays, and Free My TV opens with a long press of a number key.
+stays, and TVmaxxer opens with a long press of a number key.
 
 1. **Ask** for the TV's IP address and their city, if they didn't say. Tools: Python 3 and OpenSSH (`ssh`,
    `ssh-keygen`), already on macOS, Linux and Windows 10+.
@@ -114,14 +114,14 @@ stays, and Free My TV opens with a long press of a number key.
    passphrase.
 3. **Settings:** the same `config.properties` as on Android (the first `python3 webos/build.py` creates it). The
    TMDB key rules above apply.
-4. **Build:** `python3 webos/build.py` must end with `Built FreeMyTV-webos.ipk`.
+4. **Build:** `python3 webos/build.py` must end with `Built TVmaxxer-webos.ipk`.
 5. **Install:** the first time needs the TV's passphrase, typed by them: ask them to run
    `python3 webos/install.py <IP>` in their own terminal (yours can't answer its prompt, and the passphrase doesn't go
-   in the chat). It keeps the unlocked key in `~/.ssh/freemytv_webos_<IP>` (dots as underscores), so later updates
+   in the chat). It keeps the unlocked key in `~/.ssh/tvmaxxer_webos_<IP>` (dots as underscores), so later updates
    run from your terminal with the same command.
-6. **Tell them:** while Free My TV is open, holding a number key pins it to that key (on a remote without number keys,
+6. **Tell them:** while TVmaxxer is open, holding a number key pins it to that key (on a remote without number keys,
    it's in LG's app list on the home screen). Developer Mode lasts about 40 days; *EXTEND* in that app renews it (if
-   it runs out, the TV removes developer apps, and installing again brings it back). `--uninstall` removes Free My TV.
+   it runs out, the TV removes developer apps, and installing again brings it back). `--uninstall` removes TVmaxxer.
 7. **Empty shelf on webOS 3** (user agent Chrome 38): the app can't list the TV's apps there (`listLaunchPoints`
    denied, no `getAppLoadStatus`, and the remote control API answers `invalid origin` to file:// pages). Run
    `python3 webos/apps.py <IP>`: the TV asks them once to allow it, then build and install again. It writes
@@ -135,7 +135,7 @@ On Samsung it's an app too (Tizen 2.3+: 2015 and newer, one 2015 TV reported, #3
 Developer Mode; Samsung's home screen stays. Two ways:
 
 - **The release, no tools:** TizenBrew Installer (github.com/reisxd/TizenBrewInstaller) installs the latest GitHub
-  release when they type `simbasjungles/free-my-tv`, and on 2023+ TVs signs it with their Samsung account. That build
+  release when they type `simbasjungles/tvmaxxer`, and on 2023+ TVs signs it with their Samsung account. That build
   has no TMDB key built in (they type theirs in *Home Settings* → *TMDB key*) and takes the city from the TV's time
   zone. Walk them through the README's steps.
 - **Their own build** (their city, their TMDB key), below.
@@ -158,7 +158,7 @@ Developer Mode; Samsung's home screen stays. Two ways:
    and `tizen cli-config "profiles.path=<home>/tizen-studio-data/profile/profiles.xml"`; on macOS the passwords go to
    the login Keychain). Certificate passwords are theirs: they type them in their own terminal, never in the chat.
 5. **Settings:** the same `config.properties`; the TMDB key rules above apply.
-6. **Build and sign:** `python3 tizen/build.py --sign <profile>` must end with `Built FreeMyTV-tizen.wgt (...,
+6. **Build and sign:** `python3 tizen/build.py --sign <profile>` must end with `Built TVmaxxer-tizen.wgt (...,
    signed with "<profile>")`.
 7. **Install:** `python3 tizen/install.py <IP>`: it pushes the app over SDB (port 26101), installs it with the TV's
    `0 vd_appinstall` and opens it with `0 was_execute` (tested on 2016 Tizen 2.4, 2017 Tizen 3.0, 2019 Tizen 5.0 and
@@ -166,42 +166,42 @@ Developer Mode; Samsung's home screen stays. Two ways:
    `/opt/usr/apps/tmp`; on 2015 firmware `developerMode` on port 8001 can read 0 while SDB works, and SDB resets the
    connection when the TV's Host PC IP isn't this computer's current one); it only reports success
    when the TV says `install completed` (`cmd_ret:0` comes after failures too). `--uninstall` removes
-   it; some TVs' sdbd doesn't answer that, and then it's removed on the TV (Apps, Settings, Free My TV, Delete).
-   With Samsung's tools instead: `sdb connect <IP>`, `tizen install -n FreeMyTV-tizen.wgt -t <serial from sdb
-   devices>` and `tizen run -p FreeMyTVio.FreeMyTV -t <serial>`. Updates need the same certificate: the TV refuses
+   it; some TVs' sdbd doesn't answer that, and then it's removed on the TV (Apps, Settings, TVmaxxer, Delete).
+   With Samsung's tools instead: `sdb connect <IP>`, `tizen install -n TVmaxxer-tizen.wgt -t <serial from sdb
+   devices>` and `tizen run -p io.tvmaxxer.TVmaxxer -t <serial>`. Updates need the same certificate: the TV refuses
    one signed by another (uninstall first). A retail TV's sdbd only takes files (`filesync_support:push`): nothing
-   can be pulled from it. To look inside the running app, `0 debug FreeMyTVio.FreeMyTV 300` over SDB opens it with
+   can be pulled from it. To look inside the running app, `0 debug io.tvmaxxer.TVmaxxer 300` over SDB opens it with
    a Web Inspector port (Runtime.evaluate works on Tizen 3; screenshots don't; Tizen 2.4 doesn't answer it, nor
    `0 vd_applist`). Tizen 2.3 (a 2015 UE48JU6075) answers it on port 7011, one WebSocket connection per launch
-   (`ws://<IP>:7011/devtools/page/1`; `0 kill FreeMyTVio` first to launch it again), and `0 applist` lists its web
+   (`ws://<IP>:7011/devtools/page/1`; `0 kill io.tvmaxxer` first to launch it again), and `0 applist` lists its web
    apps (not the native ones, below).
 8. **Tell them:** *Autorun Last App* in the TV's settings (under Start Screen Options; where it is changes by year)
-   makes the TV turn on into Free My TV on a 2017 set; 2019 and 2020 sets don't reopen Developer Mode apps with it
+   makes the TV turn on into TVmaxxer on a 2017 set; 2019 and 2020 sets don't reopen Developer Mode apps with it
    (#356), so there they move it to the first place in the Home bar.
 
 ## Releases
 
-Every release carries `FreeMyTV.apk` for Google TV and Android TV, built with `./build.sh --generic` (no
+Every release carries `TVmaxxer.apk` for Google TV and Android TV, built with `./build.sh --generic` (no
 config.properties: no key, and `Place` takes the city, the currency and the region from the TV's time zone through
 `app/assets/zones.json`) and signed with the project's release key, which lives only on the owner's Mac
-(`~/.freemytv/release.keystore`, its password in the login Keychain as `freemytv-release-apk`):
-`FREEMYTV_KEYSTORE=~/.freemytv/release.keystore FREEMYTV_KEYSTORE_PASS="$(security find-generic-password -s
-freemytv-release-apk -w)" ./build.sh --generic`. Sign every release with that key: Android refuses an update signed
+(`~/.tvmaxxer/release.keystore`, its password in the login Keychain as `tvmaxxer-release-apk`):
+`TVMAXXER_KEYSTORE=~/.tvmaxxer/release.keystore TVMAXXER_KEYSTORE_PASS="$(security find-generic-password -s
+tvmaxxer-release-apk -w)" ./build.sh --generic`. Sign every release with that key: Android refuses an update signed
 by another, and people who built their own must uninstall it before installing the release.
 
 TizenBrew Installer takes the first `.wgt` of the latest GitHub release, so every release carries
-`FreeMyTV-tizen.wgt`: built with `--generic` (no config.properties: no key, the city from the time zone) and signed
+`TVmaxxer-tizen.wgt`: built with `--generic` (no config.properties: no key, the city from the time zone) and signed
 with a Tizen certificate (`--sign`), which 2017-2022 TVs install as it is; on 2023+ TVs the installer signs it again
 with the person's Samsung certificate. Sign every release with the same author certificate: older TVs refuse an
 update signed by another. `python3 webos/build.py --generic` makes the LG `.ipk` that goes along.
-The release's `FreeMyTV.apk` updates itself (`Updates`: a weekly job, and Home Settings > Updates): it reads
-`releases/latest`, so keep the asset named `FreeMyTV.apk`, sign it with the project's key, and raise `versionName`
+The release's `TVmaxxer.apk` updates itself (`Updates`: a weekly job, and Home Settings > Updates): it reads
+`releases/latest`, so keep the asset named `TVmaxxer.apk`, sign it with the project's key, and raise `versionName`
 (compared number by number with the tag, `v1.3.0` > `1.2`) and `versionCode` (Android refuses a lower one). Before
-uploading, `apksigner verify --print-certs FreeMyTV.apk` must show the release certificate
+uploading, `apksigner verify --print-certs TVmaxxer.apk` must show the release certificate
 (`b85d4ff69cb42bfb1837ee0279506363954470b16402a4165f2f095886d19204`, `Updates.RELEASE_CERT`): TVs refuse any other. Then
-`python3 tools/homebrew_repo.py <the uploaded FreeMyTV-webos.ipk>` writes `docs/webos/apps.json`, the webOS Homebrew
-Channel repository (https://freemytv.io/webos/apps.json, with that file's SHA-256), and a copy of the `.ipk` beside it:
-commit both with the release. The Channel installs from freemytv.io, not from the GitHub release, because GitHub's
+`python3 tools/homebrew_repo.py <the uploaded TVmaxxer-webos.ipk>` writes `docs/webos/apps.json`, the webOS Homebrew
+Channel repository (https://tvmaxxer.io/webos/apps.json, with that file's SHA-256), and a copy of the `.ipk` beside it:
+commit both with the release. The Channel installs from tvmaxxer.io, not from the GitHub release, because GitHub's
 download redirect carries more headers than the TV's Node accepts ("Parse Error: Header overflow").
 
 ## Adapting it to another TV
@@ -226,15 +226,15 @@ Then, in the code:
   (the layer under HDMI and the tuner: off, inputs show "No signal") or receives the remote's Input key
   (`fusion.android.tv.demo` does on several MediaTek boards).
 - `HomeApps.SHELF`, `LIVE_TV_APPS` and `HIDDEN`: the shelf apps, the brand's live TV app, apps to hide from All Apps.
-- Build, install, have them switch on the TV, read `adb logcat -s FreeMyTV`, then have them switch back to
+- Build, install, have them switch on the TV, read `adb logcat -s TVmaxxer`, then have them switch back to
   *Original* once and confirm everything returned.
 
 LG and Samsung: the web app above. Other TVs that don't run Google TV or Android TV: the way is a Google TV streamer on
-HDMI (Chromecast with Google TV, Google TV Streamer, onn 4K, NVIDIA Shield). Set Free My TV up on the streamer.
+HDMI (Chromecast with Google TV, Google TV Streamer, onn 4K, NVIDIA Shield). Set TVmaxxer up on the streamer.
 The onn 4K Streaming Box (Amlogic S905Y4, Google TV 14 tested) ships no promo apps of its own, so `DEBLOAT` has no onn
 entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 there, as the app needs.
 
-**Uninstalled while in Free My TV mode?** The apps it turned off stay off. Bring them back with
+**Uninstalled while in TVmaxxer mode?** The apps it turned off stay off. Bring them back with
 `adb shell pm enable <package>` (the `DEBLOAT` list and the stock home screen), then
 `adb shell cmd package set-home-activity <stock home activity>` and
 `adb shell settings put secure screensaver_components <stock screensaver>`. On an HY300 with JmLauncher, also
@@ -302,17 +302,21 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   are. Run `python3 tools/translate.py --check` to validate all catalogues without writing files.
   No right-to-left languages yet (the layout isn't mirrored); CJK and Devanagari use the system font.
   Comments in English, short, only where the why isn't obvious.
-- Settings come from `config.properties` through the generated `out/gen/io/freemytv/Config.java` (never edit that).
+- Settings come from `config.properties` through the generated `out/gen/io/tvmaxxer/Config.java` (never edit that).
   Built with `--generic`, the place values are empty and `Place` fills them from the TV's time zone
   (`app/assets/zones.json`, written by `tools/make_zones.py` with `web/zones.js`).
   What the person changes on the TV (`Prefs`: Home Settings, Shelf, Remote Buttons, Sleep Timer) wins over those first values.
 - Settings rows that need something this TV lacks stay, dimmed as *Unavailable*: `SettingsActivity.need` names what a
   row needs, `Capabilities.missing` says why it's missing (once per screen), and OK on the row shows it in a toast.
 - The remote's app buttons (`RemoteKeys`, `RemoteKeyService`) use each brand's key codes: they run only on TCL,
-  Vestel, KTC (NextStar), Sony, Xiaomi and Hisense TVs and Formovie projectors, the service is on only in Free My TV mode, and *Original* takes it out of the enabled accessibility
+  Vestel, KTC (NextStar), Sony, Xiaomi and Hisense TVs and Formovie projectors, the service is on only in TVmaxxer mode, and *Original* takes it out of the enabled accessibility
   services. The system waits for the service on every key, so it lives alone in the `:keys` process: what it reads is
   in `remote-keys.txt` (`Prefs.keyApp`), never in SharedPreferences, and `onKeyEvent` does no heavy work.
-  The service is also off while every button is *Nothing*, and always on TCL's Android 11 (`RemoteKeys.FILTER_SAFE`):
+  Home Settings > *Settings on Home hold* (`Prefs.homeHold`) keeps the service on for the gesture alone: holding Home
+  opens `SettingsActivity` from inside any app (`RemoteKeys.onKey`, before `supported()`, so our own home screen's
+  window gets it on any TV). The `:keys` process shares no preferences, so it reads the choice from the `home-hold`
+  file (`Prefs.homeHoldInKeys`), written by the settings screen; the row is unavailable where `RemoteKeys.supported()`
+  is false (`Capabilities.NEED_HOME_HOLD`). The service is also off while every button is *Nothing*, and always on TCL's Android 11 (`RemoteKeys.FILTER_SAFE`):
   there any key filter makes the TV act on a volume key twice (one press moves 2 steps and a held key gets stuck, #325;
   turning off only our service fixed it), so the buttons work only where they reach our home screen's window.
   Vestel (F&U and other store brands; MediaTek, Android TV 14 tested) maps its Netflix button to `KEYCODE_STEM_1`, a
@@ -334,7 +338,7 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   TV, and PatchWall's All Apps opens the disabled `tvlauncher`. `Prefs.KEY_MI` opens our home screen by default
   ("Xiaomi default", empty, leaves it to PatchWall). Leave PatchWall on: it also shows the TV's input picker.
   Xiaomi TVs with a Home button (MiTV-MOOR0, MediaTek, Android TV 11 tested) send `KEYCODE_BUTTON_3` for YouTube, a
-  global key for the stock home screen (`launcherx`) that Free My TV turns off, and `KEYCODE_BUTTON_5` for PatchWall,
+  global key for the stock home screen (`launcherx`) that TVmaxxer turns off, and `KEYCODE_BUTTON_5` for PatchWall,
   a global key for the same `partnercustomizer` receiver: both are ours (`Prefs.KEY_XIAOMI_PATCHWALL` is left to the
   TV until an app is picked). Netflix (`BUTTON_6`) stays with the system. Their remote sends one press as a burst of 5
   to 8: `RemoteKeys` opens the app once (Xiaomi only).
@@ -349,18 +353,18 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   app is picked. Its other buttons' codes weren't matched to the remote, so none of them is ours.
   Hisense (Q6N, MediaTek, Android TV 12 tested) sends `295` for Prime Video, `KEYCODE_BUTTON_3` for YouTube,
   `KEYCODE_ALL_APPS` for its All Apps (3×3) button, `KEYCODE_NOTIFICATION` for the gear and `KEYCODE_PROFILE_SWITCH`
-  for the profile button, all global keys for Google TV's home app (`launcherx`), which Free My TV mode turns off, and
+  for the profile button, all global keys for Google TV's home app (`launcherx`), which TVmaxxer mode turns off, and
   `607` for Disney+: without the service they do nothing. Netflix (`KEYCODE_STEM_1`) stays with the system. The gear
   opens TV Settings and All Apps opens our own sheet (`Prefs.ALL_APPS`, `HomeActivity.EXTRA_ALL_APPS`); the profile
-  button has nothing to open without `launcherx`. Hisense keeps only error logs: `adb shell setprop log.tag.FreeMyTV I`
-  before reading `adb logcat -s FreeMyTV`.
+  button has nothing to open without `launcherx`. Hisense keeps only error logs: `adb shell setprop log.tag.TVmaxxer I`
+  before reading `adb logcat -s TVmaxxer`.
   `adb shell input keyevent` doesn't test any of these: injected keys skip the accessibility key filter.
 - What's playing (`NowPlaying`) comes from the apps' media sessions, which Android hands only to an allowed notification
   listener. A listener could read every notification, so ours follows Home Settings' *Now Playing widget* (off by
   default): turning it on allows it through ADB (`HomeMode.nowPlayingAccess`, `cmd notification allow_listener`; the
   `enabled_notification_listeners` setting grants nothing since Android 8) and proves it took (`Capabilities.LISTENER`,
   else the row shows Unavailable); turning it off, *Original* and the watchdog's revert take it back. The switch to
-  Free My TV mode allows nothing. `HomeMode` sets it, under the `RUN` lock, to what the widget says at that moment (so
+  TVmaxxer mode allows nothing. `HomeMode` sets it, under the `RUN` lock, to what the widget says at that moment (so
   quick toggles and a revert can't cross), `verifyNow` does the same after a boot or an update, and a screen that finds
   it on but not allowed asks once.
   It unbinds itself as soon as it connects (the permission is all it's for), and the home screen and the screensaver
@@ -390,7 +394,7 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   (`service check launcherapps`: not found), so `LauncherApps.registerCallback` throws a NullPointerException and
   `HomeView` now catches it: the shelf doesn't refresh by itself after an install there, only when the home screen
   opens again. Its stock home is `com.htc.magcubicos`, which also holds the Wi-Fi, Bluetooth and projection settings
-  (nothing answers `android.settings.SETTINGS` in Free My TV mode). Its own "ADB debug" switch turns on Wireless
+  (nothing answers `android.settings.SETTINGS` in TVmaxxer mode). Its own "ADB debug" switch turns on Wireless
   debugging, TLS-only on 5555, with no pairing screen in its settings: `com.android.tv.settings` (Activity Launcher,
   from F-Droid) has one. After pairing, `adb tcpip 5555` and Wireless debugging off leave classic adb on 5555, until
   the next restart.
@@ -409,7 +413,7 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   (`HomeApps.fireInput`). Live TV opens `com.amazon.tv.livetv/.DttIconWrapperActivity`, the antenna's entry.
   A Fire OS TV restarts quietly into standby when turned off (QHB) once it booted from power; after a reboot from
   software (`adb reboot`) every power-off restarts it with the screen on, until it's unplugged for 30 seconds.
-- After any change, `./build.sh` must end with `Built FreeMyTV.apk`.
+- After any change, `./build.sh` must end with `Built TVmaxxer.apk`.
 - LG and Samsung (`web/`): plain ES5 JavaScript and CSS without variables, grid or backdrop-filter, since older TVs
   (webOS 3 and 4, Tizen 3) run a Chromium from 2015 to 2017 (`tools/check.sh` greps for all of these); only transform
   and opacity animate. Tizen 2.4 (2016) runs WebKit 538: no Intl (`fmt` in data.js rounds by hand), SVGs need a width
@@ -426,7 +430,7 @@ entries; its system pieces are in `PROTECTED`. USB debugging opens ADB on 5555 t
   TV's side: on LG, Luna (`listLaunchPoints`, `launch`, the inputs; where webOS 6 and newer deny `listLaunchPoints`
   to Developer Mode apps, the list comes from the TV's remote control API on `ws://127.0.0.1:3000` once the TV has
   allowed it (it asks once; a "no" isn't asked again; firmware that gives the page its own origin,
-  `file://io.freemytv-webos`, gets 1008 "invalid origin" there, and the call goes through `webos/service`, a JS
+  `file://io.tvmaxxer-webos`, gets 1008 "invalid origin" there, and the call goes through `webos/service`, a JS
   service in the package whose handshake says `file://`; webOS 22 with 2026 firmware tested), and until then from
   `getAppLoadStatus` over a list of known app ids, which shows the logo bundled in `web/icons/` where there is one, otherwise the name on the brand's color);
   on Samsung, `tizen.application` (`getAppsInfo`, `launch`), the `VIDEOSOURCE` property and

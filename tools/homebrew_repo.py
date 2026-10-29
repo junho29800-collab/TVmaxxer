@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Writes docs/webos/apps.json, the repository the webOS Homebrew Channel reads (https://freemytv.io/webos/apps.json).
+"""Writes docs/webos/apps.json, the repository the webOS Homebrew Channel reads (https://tvmaxxer.io/webos/apps.json).
 
-    python3 tools/homebrew_repo.py FreeMyTV-webos.ipk
+    python3 tools/homebrew_repo.py TVmaxxer-webos.ipk
 
 Run it at release time, on the exact .ipk uploaded to the GitHub release (built with `webos/build.py --generic`), and
 commit what it writes with the release: the JSON and a copy of the .ipk in docs/webos/. The Channel downloads `ipkUrl`,
 checks this SHA-256 and size, and installs it with the same Developer Mode installer webos/install.py uses.
 
-Everything the TV fetches comes from freemytv.io. The Channel's service runs on the TV's own Node, whose HTTP parser
+Everything the TV fetches comes from tvmaxxer.io. The Channel's service runs on the TV's own Node, whose HTTP parser
 takes at most 8 KB of headers, and GitHub's release download answers with a redirect carrying about 10 KB (most of it a
 Content-Security-Policy): the install stops at "Parse Error: Header overflow" (#234). GitHub Pages answers with under
 1 KB. The manifest goes inline, and full_description.html is what the Channel shows on the app's page.
@@ -21,9 +21,9 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR = os.path.join(ROOT, 'docs', 'webos')
 OUT = os.path.join(DIR, 'apps.json')
-SITE = 'https://freemytv.io/webos/'
-ICON = 'https://freemytv.io/assets/icon-512.png'
-SOURCE = 'https://github.com/simbasjungles/free-my-tv'
+SITE = 'https://tvmaxxer.io/webos/'
+ICON = 'https://tvmaxxer.io/assets/icon-512.png'
+SOURCE = 'https://github.com/simbasjungles/tvmaxxer'
 
 
 def write(sha256, size, ipk):
@@ -69,9 +69,9 @@ def main():
         return 2
     data = open(sys.argv[1], 'rb').read()
     version = json.load(open(os.path.join(ROOT, 'webos', 'appinfo.json'), encoding='utf-8'))['version']
-    ipk = f'FreeMyTV-webos-{version}.ipk'
+    ipk = f'TVmaxxer-webos-{version}.ipk'
     # Only the current release is served: older copies go.
-    for old in glob.glob(os.path.join(DIR, 'FreeMyTV-webos-*.ipk')):
+    for old in glob.glob(os.path.join(DIR, 'TVmaxxer-webos-*.ipk')):
         if os.path.basename(old) != ipk:
             os.remove(old)
     with open(os.path.join(DIR, ipk), 'wb') as f:

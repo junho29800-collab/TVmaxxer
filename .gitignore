@@ -10,7 +10,7 @@ webos-icons.local/
 out/
 *.apk
 *.ipk
-!docs/webos/FreeMyTV-webos-*.ipk
+!docs/webos/TVmaxxer-webos-*.ipk
 *.wgt
 __pycache__/
 
